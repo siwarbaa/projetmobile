@@ -1,11 +1,12 @@
 const WasteFood = require('../models/WasteFood');
 
-// Create WasteFood entry
 exports.createWasteFood = async (req, res) => {
   try {
-    console.log('Request body:', req.body); // Log the request payload
+    // Log to confirm the data is received
+    console.log('Request body:', req.body);
     console.log('Decoded user from token:', req.user);
 
+    // Validation de l'utilisateur
     if (!req.user?.id) {
       return res.status(401).json({ message: 'User not authenticated or token invalid' });
     }
@@ -22,17 +23,19 @@ exports.createWasteFood = async (req, res) => {
       expirationDate,
       category,
       location,
-      sellerId: req.user.id, // Ensure authenticated user is set
+      sellerId: req.user.id,
     });
 
-    console.log('Attempting to save new waste food to database:', newWasteFood);
+    // Log the object before saving
+    console.log('Saving waste food item to database:', newWasteFood);
 
     const savedItem = await newWasteFood.save();
-    console.log('Waste food item saved:', savedItem);
+    console.log('Item saved:', savedItem);
 
+    // Send response back to client
     res.status(201).json({ message: 'Waste food item created successfully', item: savedItem });
   } catch (error) {
-    console.error('Error while saving waste food item:', error);
+    console.error('Error:', error);
     res.status(500).json({ message: 'Failed to create waste food item', error: error.message });
   }
 };
